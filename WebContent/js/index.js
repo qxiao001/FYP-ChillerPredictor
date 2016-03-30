@@ -19,15 +19,30 @@ var resultJsons = [ {
 
 $(document).ready(function() {
 
-	
-	  $.ajax({ url : "/ChillerPredictor/PowerServelet", dataType : 'json', type :
-	  "POST", success : function(data) { // window.alert("456" + data);
-	  resultJsons = data; window.alert("456" + resultJsons[1].actual);
-	 drawTrend(data); }, });
+	 $("#rangeSubmit").click(function(){
+         
+         
+		 event.preventDefault();
+	     start = $("#datestart").val()+" "+$("#timestart").val();
+	     end = $("#dateend").val()+" "+$("#timeend").val();
+		// window.alert(data);
+		 
+	  $.ajax({ url : "/ChillerPredictor/PowerServelet?start="+start+"&end="+end, 
+		       dataType : 'json', 
+		       type : "GET", 
+		      // data:JSON.stringify(data),
+		      // data: data,
+		      // contentType:  'application/json; charset=utf-8',
+		    
+		       success : function(data) 
+		       { 
+	                 resultJsons = data; 
+	                 window.alert("456" + resultJsons[1].actual);
+	                 drawTrend(data); }, });
 	 
 	// drawTrend(resultJsons);
 
-
+	 });
 });
 
 function drawTrend3(resultJsons) {

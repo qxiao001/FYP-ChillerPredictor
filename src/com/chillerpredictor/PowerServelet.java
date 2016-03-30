@@ -30,15 +30,18 @@ public class PowerServelet extends HttpServlet {
 		super();
 	}
 
-	protected void doGet(HttpServletRequest request,
+	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
 
-	protected void doPost(HttpServletRequest request,
+	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-		//String PowerCode = request.getParameter("PowerCode");
+		String start = request.getParameter("start");
+		String end = request.getParameter("end");
+		System.out.println("selected range"+ start + end );
+		
 
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
@@ -46,7 +49,7 @@ public class PowerServelet extends HttpServlet {
 	
 
 		Gson gson = new Gson();
-		out.write(gson.toJson(getInfo()));
+		out.write(gson.toJson(getInfo(start,end)));
 		
 		
 
@@ -55,7 +58,7 @@ public class PowerServelet extends HttpServlet {
 	}
 
 	// Get Power Information
-	private JsonArray getInfo() {
+	private JsonArray getInfo(String start, String end) {
 
 		//ArrayList <PowerElmt> powerTrend = new ArrayList <PowerElmt>();
 		JsonArray powerTrend = new JsonArray();
@@ -71,7 +74,9 @@ public class PowerServelet extends HttpServlet {
 			Context ic = (Context) new InitialContext().lookup("java:comp/env");
             con = ((DataSource) ic.lookup("jdbc/postgresql")).getConnection(); 
 			stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from \"test\" limit 100 ");
+			String query= "select * from \"test\" where (hourstamp - \'" + start +"\') >= interval \'0 seconds\' and (hourstamp - \'" + end +"\') <= interval \'0 seconds\'  ";
+			System.out.println(query);
+			ResultSet rs = stmt.executeQuery(query);
 		
 
 			while (rs.next()) {
